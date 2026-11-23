@@ -1,0 +1,6 @@
+logs/
+play-service-account.json
+node_modules/
+site/node_modules/
+site/dist/
+.DS_Store

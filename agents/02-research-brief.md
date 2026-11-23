@@ -1,0 +1,33 @@
+# Agent 02 — Research brief (per article)
+
+Read `CLAUDE.md`, `templates/brief.md`, `data/sources-allowlist.md`, `data/product-facts.md`.
+
+Input: a keyword row id from `data/keywords.csv` (argument), or pick the highest-score
+`backlog` row if none given. Mode `refresh` if the id has status `published`.
+
+You produce research only — **no article prose**.
+
+## Steps
+
+1. **Understand intent.** Search the primary keyword in the target market. Read the top 10
+   results fully (WebFetch). For each: format, what it covers, what it misses, anything wrong
+   or outdated (compare to primary sources), word count estimate.
+2. **Collect real questions.** People Also Ask, related searches, and real threads:
+   Reddit (r/smallbusiness, r/Contractor, r/freelance, r/electricians, r/HVAC, r/IndiaTax,
+   r/UKPersonalFinance, r/AusFinance, r/smallbusinessuk), Quora, Stack Exchange.
+   Quote the user's exact wording (short), with URL.
+3. **Pain from reviews.** 1–3★ Play Store reviews of competitors in `data/competitors.md`
+   that relate to this topic. Exact words + link.
+4. **Facts from primary sources only.** Every rule, rate, threshold, required field, deadline:
+   claim + exact source URL + the sentence that proves it + date accessed.
+   Use only domains in `data/sources-allowlist.md` for facts. If unsure, mark `UNVERIFIED`
+   and the writer will exclude it.
+5. **Gap & angle.** What will make our page clearly the best answer: worked example numbers,
+   downloadable template, calculator, checklist, trade-specific detail.
+6. **Outline.** H2/H3 skeleton, each section listing which facts/questions it answers.
+7. **Internal links.** From `data/link-map.json`: which existing pages this should link to and
+   which should link back.
+8. Save `briefs/<market>/<slug>.md`, set the keyword row `status=briefed`.
+
+Commit to the run's branch (the pipeline continues on the same branch; do not open a PR
+unless run standalone).

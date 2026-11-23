@@ -1,0 +1,32 @@
+default_platform(:android)
+
+platform :android do
+  desc "Validate store listing text lengths"
+  lane :validate_listing do
+    limits = { "title.txt" => 30, "short_description.txt" => 80, "full_description.txt" => 4000 }
+    errors = []
+    Dir.glob("metadata/android/*/").each do |dir|
+      limits.each do |file, max|
+        path = File.join(dir, file)
+        next unless File.exist?(path)
+        len = File.read(path).strip.length
+        errors << "#{path}: #{len}/#{max}" if len > max
+      end
+    end
+    UI.user_error!("Listing too long:\n" + errors.join("\n")) unless errors.empty?
+    UI.success("All listing text within limits")
+  end
+
+  desc "Upload store listing text only (no APK, no screenshots)"
+  lane :push_listing do
+    validate_listing
+    upload_to_play_store(
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      metadata_path: "fastlane/metadata/android"
+    )
+  end
+end
