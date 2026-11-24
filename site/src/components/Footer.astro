@@ -1,0 +1,21 @@
+---
+import { hubMarkets, markets } from '../lib/markets';
+---
+<footer class="mt-20 border-t border-[var(--line)] bg-[var(--bg-soft)]">
+  <div class="container-x grid gap-8 py-10 text-sm sm:grid-cols-3">
+    <div>
+      <p class="font-bold">Quotation Maker Pro</p>
+      <p class="mt-2 text-[var(--muted)]">Android app for quotes, estimates and invoices.</p>
+    </div>
+    <nav aria-label="Guides by country">
+      <p class="font-semibold">Guides by country</p>
+      <ul class="mt-2 space-y-1">
+        {hubMarkets.map((m) => <li><a href={`/${markets[m].path}/`}>{markets[m].name}</a></li>)}
+      </ul>
+    </nav>
+    <nav aria-label="More">
+      <p class="font-semibold">More</p>
+      <ul class="mt-2 space-y-1"><li><a href="/tools/">Free tools</a></li></ul>
+    </nav>
+  </div>
+</footer>
