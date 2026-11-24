@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import AppCta from '../../components/AppCta.astro';
 import { getCollection, render } from 'astro:content';
-import { markets, hubMarkets, articleUrl, abs, SITE } from '../../lib/markets';
+import { markets, articleUrl, abs, SITE } from '../../lib/markets';
 
 export async function getStaticPaths() {
   const all = await getCollection('articles');
@@ -15,7 +15,8 @@ export async function getStaticPaths() {
 }
 const { entry, all } = Astro.props;
 const d = entry.data;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const toc = headings.filter((h) => h.depth === 2);
 const info = markets[d.market];
 const path = articleUrl(d.market, d.slug);
 
@@ -49,13 +50,25 @@ if (d.faq.length > 0) {
 }
 ---
 <Base title={d.title} description={d.description} lang={info.lang} canonicalPath={path} alternates={alternates} ogType="article" jsonLd={jsonLd}>
-  <nav class="crumbs"><a href="/">Home</a> / <a href={`/${info.path}/`}>{info.name}</a></nav>
-  <article>
-    <h1>{d.title}</h1>
-    <p><small>Last reviewed: {iso(d.lastReviewed)}</small></p>
-    <Content />
-    {d.faq.length > 0 && <section><h2>FAQ</h2>{d.faq.map((f) => <><h3>{f.q}</h3><p>{f.a}</p></>)}</section>}
-    {d.sources.length > 0 && <section><h2>Sources</h2><ul>{d.sources.map((s) => <li><a href={s.url} rel="noopener">{s.title}</a></li>)}</ul></section>}
-    <AppCta market={d.market} slug={d.slug} />
-  </article>
+  <div class="container-x py-8 lg:grid lg:grid-cols-[minmax(0,70ch)_16rem] lg:justify-center lg:gap-12">
+    <article class="prose-qmp">
+      <nav class="mb-4 text-sm text-[var(--muted)]" aria-label="Breadcrumb"><a href="/">Home</a> / <a href={`/${info.path}/`}>{info.name}</a></nav>
+      <h1>{d.title}</h1>
+      <p class="text-sm text-[var(--muted)]">Last reviewed: {iso(d.lastReviewed)}</p>
+      <Content />
+      {d.faq.length > 0 && <section><h2>FAQ</h2>{d.faq.map((f) => <><h3>{f.q}</h3><p>{f.a}</p></>)}</section>}
+      {d.sources.length > 0 && <section><h2>Sources</h2><ul>{d.sources.map((s) => <li><a href={s.url} rel="noopener">{s.title}</a></li>)}</ul></section>}
+      <AppCta market={d.market} slug={d.slug} />
+    </article>
+    {toc.length > 1 && (
+      <aside class="hidden lg:block" aria-label="On this page">
+        <nav class="sticky top-6 text-sm">
+          <p class="font-semibold">On this page</p>
+          <ul class="mt-2 space-y-1.5 border-l border-[var(--line)] pl-3">
+            {toc.map((h) => <li><a href={`#${h.slug}`} class="text-[var(--muted)] no-underline hover:text-[var(--link)]">{h.text}</a></li>)}
+          </ul>
+        </nav>
+      </aside>
+    )}
+  </div>
 </Base>

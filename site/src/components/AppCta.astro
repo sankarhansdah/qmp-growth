@@ -4,11 +4,12 @@ import type { Market } from '../lib/markets';
 
 interface Props { market: Market; slug: string; }
 const { market, slug } = Astro.props;
-const term = { us: 'estimate', in: 'quotation', ae: 'quotation' }[market] ?? 'quote';
+const terms: Partial<Record<Market, string>> = { us: 'estimate', in: 'quotation', ae: 'quotation' };
+const term = terms[market] ?? 'quote';
 ---
-<aside class="cta" data-market={market}>
-  <p>Doing every {term} by hand? Quotation Maker Pro fills in your business details, tax and totals automatically and exports a clean PDF. Free for 5 documents a month.</p>
+<aside class="cta card my-10" style="border-color: var(--link)" data-market={market}>
+  <p class="mb-3">Doing every {term} by hand? Quotation Maker Pro fills in your business details, tax and totals automatically and exports a clean PDF. Free for 5 documents a month.</p>
   {PUBLISHED
     ? <a class="btn" rel="noopener" href={playUrl(slug)}>Get it on Google Play</a>
-    : <p><strong>Android app coming soon to Google Play.</strong></p>}
+    : <p class="mb-0 font-semibold">Android app coming soon to Google Play.</p>}
 </aside>

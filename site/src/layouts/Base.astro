@@ -1,5 +1,8 @@
 ---
 import { SITE } from '../lib/markets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -18,6 +21,7 @@ const canonical = SITE + canonicalPath;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -29,26 +33,11 @@ const canonical = SITE + canonicalPath;
     <meta property="og:site_name" content="Quotation Maker Pro" />
     <meta name="twitter:card" content="summary" />
     {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
-    <style is:global>
-      :root { color-scheme: light dark; --accent: #1a5fb4; }
-      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.6; margin: 0; }
-      .wrap { max-width: 70ch; margin: 0 auto; padding: 0 1rem; }
-      header.site { border-bottom: 1px solid #8884; padding: .75rem 0; }
-      header.site a { margin-right: 1rem; }
-      a { color: var(--accent); }
-      footer.site { border-top: 1px solid #8884; margin-top: 3rem; padding: 1rem 0 2rem; font-size: .9rem; }
-      nav.crumbs { font-size: .9rem; margin: 1rem 0; }
-      .cta { border: 1px solid var(--accent); border-radius: 8px; padding: 1rem; margin: 2rem 0; }
-      .btn { display: inline-block; background: var(--accent); color: #fff; padding: .5rem 1rem; border-radius: 6px; text-decoration: none; }
-      table { border-collapse: collapse; } td, th { border: 1px solid #8886; padding: .3rem .6rem; }
-    </style>
   </head>
   <body>
-    <header class="site"><div class="wrap">
-      <a href="/"><strong>Quotation Maker Pro</strong></a>
-      <a href="/us/">US</a><a href="/uk/">UK</a><a href="/ca/">CA</a><a href="/au/">AU</a><a href="/in/">IN</a><a href="/ae/">UAE</a><a href="/tools/">Tools</a>
-    </div></header>
-    <main class="wrap"><slot /></main>
-    <footer class="site"><div class="wrap">Quotation Maker Pro. Android app for quotes, estimates and invoices.</div></footer>
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-10 focus:rounded focus:bg-[var(--bg)] focus:p-2">Skip to content</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
   </body>
 </html>

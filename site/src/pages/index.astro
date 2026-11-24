@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import AppCta from '../components/AppCta.astro';
+import { hubMarkets, markets } from '../lib/markets';
+
 const faq = [
   { q: 'What documents can I create?', a: 'Quotes/estimates, invoices, proforma invoices, purchase orders, delivery notes and receipts.' },
   { q: 'Is it free?', a: 'The free plan includes 5 documents a month. Paid plans remove that limit.' },
@@ -13,26 +15,105 @@ const jsonLd = [
     mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   },
 ];
+const steps = [
+  { t: 'Add your business once', d: 'Name, logo, signature and your country tax profile. Saved clients and items are reused on every document.' },
+  { t: 'Build the document', d: 'Pick quote, invoice or another type. Add items, discounts and other charges. Tax and totals are worked out for you.' },
+  { t: 'Share the PDF', d: 'Choose the Modern or Classic template and send it through WhatsApp, email or any app.' },
+];
+const features = [
+  { t: 'Six document types', d: 'Quotes, estimates, invoices, proforma invoices, purchase orders, delivery notes and receipts.' },
+  { t: 'Clients and items saved', d: 'Type them once, pick them next time.' },
+  { t: 'Per-country tax profiles', d: 'GST (CGST/SGST/IGST), VAT and sales tax, with tax-inclusive or exclusive pricing.' },
+  { t: 'Discounts and charges', d: 'Flat or percentage discounts, plus other charges.' },
+  { t: 'Your branding on the PDF', d: 'Modern and Classic templates, custom accent color, logo and signature.' },
+  { t: 'Works offline', d: 'Quote on site with no signal. It syncs when you are back online.' },
+  { t: 'Multi-currency', d: 'Create documents in different currencies.' },
+  { t: 'Share anywhere', d: 'WhatsApp, email or any app on your phone.' },
+];
+const taxByMarket: Record<string, string> = {
+  us: 'Sales tax', gb: 'VAT', ca: 'GST / HST / PST', au: 'GST', in: 'GST (CGST / SGST / IGST)', ae: 'VAT',
+};
 ---
 <Base title="Quotation Maker Pro: quotes, estimates and invoices on Android" description="Create quotes, estimates, invoices and more on your phone and share a professional PDF. Free for 5 documents a month." canonicalPath="/" jsonLd={jsonLd}>
-  <h1>Quotes and invoices from your phone</h1>
-  <p>Quotation Maker Pro helps freelancers, contractors and small businesses create professional documents and share them as PDF.</p>
-  <AppCta market="global" slug="home" />
-  <p><em>Screenshots: placeholder, to be added.</em></p>
-  <h2>Features</h2>
-  <ul>
-    <li>Quotes, estimates, invoices, proforma invoices, purchase orders, delivery notes and receipts</li>
-    <li>Save clients and items</li>
-    <li>Per-country tax profiles (GST, VAT, sales tax), tax-inclusive or exclusive pricing</li>
-    <li>Flat or percentage discounts and other charges</li>
-    <li>Modern and Classic PDF templates, custom accent color, logo and signature</li>
-    <li>Share via WhatsApp, email or any app</li>
-    <li>Works offline, multi-currency</li>
-  </ul>
-  <h2>Pricing</h2>
-  <p>Free: 5 documents a month. Paid plans: unlimited documents and more (details to be announced).</p>
-  <h2>Guides by country</h2>
-  <p><a href="/us/">United States</a>, <a href="/uk/">United Kingdom</a>, <a href="/ca/">Canada</a>, <a href="/au/">Australia</a>, <a href="/in/">India</a>, <a href="/ae/">UAE</a>. Also <a href="/tools/">free tools</a>.</p>
-  <h2>FAQ</h2>
-  {faq.map((f) => <><h3>{f.q}</h3><p>{f.a}</p></>)}
+  <section class="container-x grid items-center gap-10 py-14 md:grid-cols-2 md:py-20">
+    <div>
+      <p class="eyebrow">For freelancers, contractors and small businesses</p>
+      <h1 class="mt-3 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">Quotes and invoices from your phone</h1>
+      <p class="mt-4 max-w-xl text-lg text-[var(--muted)]">Quotation Maker Pro helps freelancers, contractors and small businesses create professional documents and share them as PDF.</p>
+      <div class="mt-6 max-w-xl"><AppCta market="global" slug="home" /></div>
+    </div>
+    <div class="mx-auto w-full max-w-xs" role="img" aria-label="Placeholder for an app screenshot. Real screenshots to be added.">
+      <div class="aspect-[9/19] rounded-[2rem] border-8 border-[var(--fg)] bg-[var(--bg-soft)] p-6">
+        <div class="grid h-full place-items-center rounded-xl border border-dashed border-[var(--line)] text-center text-sm text-[var(--muted)]">App screenshot placeholder</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[var(--bg-soft)] py-14" aria-labelledby="how">
+    <div class="container-x">
+      <h2 id="how" class="text-3xl font-bold tracking-tight">How it works</h2>
+      <ol class="mt-8 grid gap-4 md:grid-cols-3">
+        {steps.map((s, i) => (
+          <li class="card bg-[var(--bg)]">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-brand-600 text-sm font-bold text-white" aria-hidden="true">{i + 1}</span>
+            <h3 class="mt-3 text-lg font-semibold">{s.t}</h3>
+            <p class="mt-1 text-[var(--muted)]">{s.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="container-x py-14" aria-labelledby="features">
+    <h2 id="features" class="text-3xl font-bold tracking-tight">Features</h2>
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {features.map((f) => (
+        <li class="card"><h3 class="font-semibold">{f.t}</h3><p class="mt-1 text-sm text-[var(--muted)]">{f.d}</p></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="bg-[var(--bg-soft)] py-14" aria-labelledby="countries">
+    <div class="container-x">
+      <h2 id="countries" class="text-3xl font-bold tracking-tight">Guides by country</h2>
+      <p class="mt-2 max-w-2xl text-[var(--muted)]">Each country has its own tax system and its own wording. Pick yours. Also see the <a href="/tools/">free tools</a>.</p>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {hubMarkets.map((m) => (
+          <li><a href={`/${markets[m].path}/`} class="card block h-full bg-[var(--bg)] no-underline text-[var(--fg)] hover:border-[var(--link)]">
+            <span class="font-semibold">{markets[m].name}</span>
+            <span class="mt-1 block text-sm text-[var(--muted)]">{taxByMarket[m]}</span>
+          </a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="container-x py-14" aria-labelledby="pricing">
+    <h2 id="pricing" class="text-3xl font-bold tracking-tight">Pricing</h2>
+    <div class="mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
+      <div class="card" style="border-color: var(--link)">
+        <h3 class="font-semibold">Free</h3>
+        <p class="mt-2 text-3xl font-bold">5 <span class="text-base font-normal text-[var(--muted)]">documents a month</span></p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold">Paid plans</h3>
+        <p class="mt-2 text-[var(--muted)]">Unlimited documents and more. Details to be announced.</p>
+        <p class="mt-2 font-semibold">Coming soon</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[var(--bg-soft)] py-14" aria-labelledby="faq">
+    <div class="container-x max-w-3xl">
+      <h2 id="faq" class="text-3xl font-bold tracking-tight">FAQ</h2>
+      <div class="mt-6 divide-y divide-[var(--line)]">
+        {faq.map((f) => (
+          <details class="group py-4">
+            <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between font-semibold">{f.q}<span aria-hidden="true" class="ml-4 text-xl group-open:rotate-45">+</span></summary>
+            <p class="mt-2 text-[var(--muted)]">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
 </Base>
