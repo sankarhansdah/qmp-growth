@@ -1,0 +1,17 @@
+---
+import { hubMarkets, markets } from '../lib/markets';
+const short: Record<string, string> = { us: 'US', gb: 'UK', ca: 'CA', au: 'AU', in: 'IN', ae: 'AE' };
+const link = 'rounded-md px-2.5 py-2 font-medium text-[var(--muted)] no-underline hover:bg-[var(--bg-soft)] hover:text-[var(--fg)]';
+---
+<header class="border-b border-[var(--line)] bg-[var(--bg)]">
+  <div class="container-x flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3">
+    <a href="/" class="flex items-center gap-2 font-bold no-underline text-[var(--fg)]">
+      <span aria-hidden="true" class="grid h-7 w-7 place-items-center rounded-md bg-brand-600 text-sm text-white">Q</span>
+      Quotation Maker Pro
+    </a>
+    <nav aria-label="Main" class="flex flex-wrap items-center gap-1 text-sm">
+      {hubMarkets.map((m) => <a href={`/${markets[m].path}/`} title={markets[m].name} class={link}>{short[m]}</a>)}
+      <a href="/tools/" class={link}>Tools</a>
+    </nav>
+  </div>
+</header>
