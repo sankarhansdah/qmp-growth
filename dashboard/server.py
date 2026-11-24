@@ -36,6 +36,7 @@ AGENTS = {
     "01-keyword-research": ("Keyword research", "Scored keyword backlog per market"),
     "07-aso": ("Play Store listing", "Title and descriptions per locale"),
     "00-bootstrap-site": ("Site bootstrap", "One-time website build"),
+    "08-site-design": ("Site design", "21st.dev component pass on the website"),
 }
 STAGES = [
     ("02-research-brief", "Research"),

@@ -31,7 +31,8 @@
       "Bash(date:*)",
       "Bash(ls:*)",
       "Bash(scripts/gsc:*)",
-      "Bash(./scripts/gsc:*)"
+      "Bash(./scripts/gsc:*)",
+      "mcp__21st"
     ],
     "deny": [
       "Bash(gum write:*)",

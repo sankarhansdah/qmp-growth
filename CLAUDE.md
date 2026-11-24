@@ -100,6 +100,7 @@ Never edit `.agents/product-marketing.md` positioning — propose changes in you
 ## Tools
 
 - `scripts/gsc` — Search Console (queries, URL inspection, sitemaps). Use this, never gum, for Search Console.
+- `mcp__21st__*` — 21st.dev UI components (site design only; convert output to static Astro).
 - `gum` — other Google APIs (Keyword Planner, Trends, Custom Search). Discover exact
   operation IDs with `gum search "<task>"` and `gum describe <op>` before calling; use
   `gum read` only (never `gum write` / `gum destructive`). Shape output with field masks.
