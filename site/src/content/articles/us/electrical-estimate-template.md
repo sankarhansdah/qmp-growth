@@ -21,9 +21,9 @@ sources:
     url: "https://comptroller.texas.gov/taxes/publications/94-116.php"
 ---
 
-**Download the free template: [electrical-estimate-template.csv](/templates/us/electrical-estimate-template.csv).** It opens in Excel, Google Sheets or Numbers, has no email gate, and the totals are formulas. Fill in the blank cells, print or save as PDF, and send.
+**Download the free template: [electrical-estimate-template.csv](/templates/us/electrical-estimate-template.csv).** It opens in Excel, Google Sheets or Numbers, has no email gate, and the totals are formulas. Fill in the blank cells, save as PDF and send.
 
-A good electrical estimate names the scope, separates materials from labor, states what is not included, shows the tax line, and gives a price validity date and a deposit. The sections below cover each part, then walk through a full example with the arithmetic.
+A good electrical estimate names the scope, separates materials from labor, states what is not included, shows the tax line, and gives a price validity date and a deposit. Below: each part, then a full example with the arithmetic. More guides for US contractors are in the [US guides hub](/us/).
 
 ## What an electrical estimate should include
 

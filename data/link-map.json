@@ -1,1 +1,7 @@
-{}
+{
+  "us/electrical-estimate-template": {
+    "cluster": "Electrical estimate",
+    "links_out": ["/us/"],
+    "links_in": []
+  }
+}
