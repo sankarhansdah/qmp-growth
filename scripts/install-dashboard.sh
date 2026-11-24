@@ -19,12 +19,15 @@ Environment=PATH=/home/agent/.npm-global/bin:/home/agent/.local/bin:/usr/local/b
 ExecStart=/usr/bin/python3 $REPO/dashboard/server.py
 Restart=always
 RestartSec=3
+# Agent runs started from the dashboard must survive a dashboard restart
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target
 UNIT
 systemctl daemon-reload
-systemctl enable --now qmp-dashboard
+systemctl enable qmp-dashboard
+systemctl restart qmp-dashboard
 sleep 2
 systemctl is-active qmp-dashboard && curl -s localhost:8787/healthz -o /dev/null -w "local check: HTTP %{http_code} (403 expected without login)\n" || true
 
@@ -35,5 +38,4 @@ if ! command -v cloudflared >/dev/null; then
   apt-get update -qq && apt-get install -y -qq cloudflared >/dev/null
 fi
 echo "cloudflared: $(cloudflared --version)"
-echo
-echo "Next: in Cloudflare Zero Trust create the tunnel and paste its 'cloudflared service install <TOKEN>' command here."
+systemctl is-active --quiet cloudflared || echo "Note: cloudflared service isn't running; admin.quotationmaker.pro needs it."

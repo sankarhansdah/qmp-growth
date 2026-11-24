@@ -107,6 +107,33 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
 .drawer pre{white-space:pre-wrap;word-break:break-word;font:12.5px/1.55 var(--mono);margin:0}
 .stagebox{border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
 .stagebox h3{margin:0;font-size:13px;padding:10px 12px;background:var(--chip);display:flex;justify-content:space-between;gap:8px}
+/* controls */
+.btn{font:inherit;font-size:12.5px;font-weight:600;border-radius:8px;padding:6px 11px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.danger.solid{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{padding:3px 8px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.prx{display:flex;gap:6px;align-items:center;flex:none}
+.chk{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px}
+.chk.pass{background:var(--brand-soft);color:var(--brand)} .chk.fail{background:var(--bad-soft);color:var(--bad)} .chk.pending{background:var(--warn-soft);color:var(--warn)}
+.ctl{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;padding:0 16px 16px}
+.editor{display:grid;gap:8px}
+.editor select,.editor input,.modal textarea,.modal input,.editor textarea{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg);color:var(--ink);width:100%}
+.editor textarea{font:12.5px/1.5 var(--mono);min-height:300px;resize:vertical}
+.erow{display:flex;gap:8px;align-items:center}
+.audit li{font-size:12.5px}
+.modal{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.35)}
+.modal.open{display:flex}
+.modal .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:min(520px,100%);padding:18px;display:grid;gap:10px}
+.modal h3{margin:0;font-size:16px}
+.modal label{font-size:12.5px;color:var(--muted);display:grid;gap:4px}
+.modal textarea{min-height:90px;resize:vertical}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;font-size:13px;max-width:calc(100% - 32px);display:none}
+.toast.show{display:block} .toast.err{background:var(--bad);color:#fff}
+@media (max-width:860px){.ctl{grid-template-columns:1fr}}
 @media (max-width:860px){.grid2,.now{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.pill.run .dot{animation:none}.drawer{transition:none}}
 </style>
@@ -119,6 +146,7 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
   <span class="spacer"></span>
   <span id="user" class="meta"></span>
   <span id="updated" class="meta"></span>
+  <button class="ghost" id="syncBtn" title="Reset the server's copy of the repo to the latest main">Sync repo</button>
   <button class="ghost" id="theme" title="Toggle theme">◐</button>
 </div></header>
 
@@ -145,6 +173,22 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
   </div>
 
   <section class="card">
+    <h2>Control panel</h2>
+    <div class="ctl">
+      <div class="editor">
+        <div class="meta">Edit the files agents read. Saving commits straight to <b>main</b> on GitHub; the next run picks it up.</div>
+        <div class="erow"><select id="fSel"></select><button class="btn" id="fLoad">Open</button></div>
+        <textarea id="fText" spellcheck="false" placeholder="Pick a file and press Open"></textarea>
+        <div class="erow"><input id="fMsg" placeholder="Commit message (optional)"><button class="btn primary" id="fSave" disabled>Save</button></div>
+      </div>
+      <div>
+        <div class="meta" style="margin-bottom:6px">Activity (who did what from this dashboard)</div>
+        <ul class="list audit" id="audit" style="border:1px solid var(--line);border-radius:10px"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
     <h2>Run history</h2>
     <div class="scroll"><table>
       <thead><tr><th>When</th><th>Agent</th><th>Stages</th><th>Duration</th><th>Cost</th><th>Result</th><th>PR</th></tr></thead>
@@ -164,6 +208,9 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
   <div class="dh"><b id="dTitle"></b><button class="ghost" id="dClose">Close</button></div>
   <div class="db" id="dBody"></div>
 </aside>
+
+<div class="modal" id="modal"><div class="box" id="mBox"></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
 const $ = s => document.querySelector(s);
@@ -228,7 +275,8 @@ function renderNow(){
         <span>Last activity</span><span class="${quiet > 900 ? "warnc" : ""}">${ago(c.last_activity)}${quiet > 900 ? " — quiet for a while" : ""}</span>
         <span>Tool calls</span><span>${c.tool_calls || 0}</span>
       </div>
-      <p><button class="ghost" onclick="openRun('${esc(c.run_id)}')">Full log</button></p>
+      <div class="actions" style="margin-top:12px"><button class="btn" onclick="openRun('${esc(c.run_id)}')">Full log</button>
+        <button class="btn danger" onclick="confirmStop()">Stop run</button></div>
     </div>
     <div>${ev.length ? `<ul class="feed">${ev.map(evItem).join("")}</ul>` : `<div class="meta">Starting up — first actions appear within a minute.</div>`}</div>
   </div>`;
@@ -247,6 +295,10 @@ function renderAgents(){
       <div class="row"><span>Next run</span><span>${a.next ? until(a.next) : "—"}</span></div>
       <div class="row"><span>Last run</span><span>${last}</span></div>
       <div class="row"><span>Runs</span><span>${a.runs}${l && l.pr ? ` · <a href="${esc(safeUrl(l.pr))}" target="_blank" rel="noopener">last PR</a>` : ""}</span></div>
+      <div class="actions">
+        ${S.runnable[a.key] ? `<button class="btn primary sm" ${S.busy ? "disabled title='An agent is already running'" : ""} onclick="askRun('${esc(a.key)}')">Run now</button>` : ""}
+        ${a.schedules.length ? `<button class="btn sm" onclick="toggleSchedule('${esc(a.key)}', ${a.paused ? "true" : "false"})">${a.paused ? "Resume schedule" : "Pause schedule"}</button>` : ""}
+      </div>
     </div>`;
   }).join("");
 }
@@ -256,7 +308,10 @@ function renderPRs(){
   $("#prCount").textContent = p.open.length;
   let h = p.open.map(x => `<li><div><a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">#${x.number} ${esc(x.title)}</a>
       <div class="sub">${esc(x.headRefName)} · opened ${ago(Date.parse(x.createdAt)/1000)}</div></div>
-      ${x.isDraft ? `<span class="badge">Draft</span>` : `<span class="badge" style="color:var(--brand)">Review</span>`}</li>`).join("");
+      <div class="prx">${x.checks && x.checks !== "none" ? `<span class="chk ${esc(x.checks)}">${x.checks === "pass" ? "Checks ✓" : x.checks === "fail" ? "Checks ✗" : "Checks…"}</span>` : ""}
+        ${x.isDraft ? `<span class="badge">Draft</span>` : ""}
+        <button class="btn primary sm" onclick="prAct(${+x.number}, 'merge', this)" data-title="${esc(x.title)}" data-checks="${esc(x.checks || "")}">Merge</button>
+        <button class="btn sm" onclick="prAct(${+x.number}, 'close', this)" data-title="${esc(x.title)}">Close</button></div></li>`).join("");
   if (!p.open.length) h = `<li class="sub">${p.ok ? "Nothing waiting for review." : "Couldn't reach GitHub — check gh auth on the server."}</li>`;
   if (p.merged.length) h += `<li class="sub" style="background:var(--chip)">Recently merged</li>` + p.merged.map(x =>
       `<li><a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">#${x.number} ${esc(x.title)}</a><span class="sub">${ago(Date.parse(x.mergedAt)/1000)}</span></li>`).join("");
@@ -322,7 +377,7 @@ async function load(){
     const r = await fetch("/api/status", {cache:"no-store"});
     if (!r.ok) throw new Error(r.status);
     S = await r.json();
-    renderAgents(); renderNow(); renderPRs(); renderContent(); renderHistory(); renderReports(); renderHealth();
+    renderAgents(); renderNow(); renderPRs(); renderContent(); renderHistory(); renderReports(); renderHealth(); renderControl();
     $("#user").textContent = S.user === "local" ? "" : S.user;
     $("#updated").textContent = "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const nx = S.agents.filter(a => a.next).sort((a,b) => a.next - b.next)[0];
@@ -363,6 +418,100 @@ async function openReport(name){
   const d = r.ok ? await r.json() : {text: "Couldn't load report."};
   $("#dBody").innerHTML = `<pre>${esc(d.text)}</pre>`;
 }
+
+// ---------- controls ----------
+function toast(msg, err){ const t = $("#toast"); t.textContent = msg; t.className = "toast show" + (err ? " err" : "");
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.className = "toast", err ? 7000 : 3500); }
+async function post(path, body){
+  const r = await fetch(path, {method:"POST", headers:{"Content-Type":"application/json","X-QMP":"1"}, body: JSON.stringify(body || {})});
+  let d = {}; try { d = await r.json(); } catch(e){}
+  if (!r.ok) throw new Error(d.error || ("Error " + r.status));
+  return d;
+}
+async function act(path, body, btn){
+  if (btn) btn.disabled = true;
+  try { const d = await post(path, body); toast(d.message || "Done"); setTimeout(load, 600); return d; }
+  catch(e){ toast(e.message, true); }
+  finally { if (btn) btn.disabled = false; }
+}
+function modal(html){ $("#mBox").innerHTML = html; $("#modal").classList.add("open"); const f = $("#mBox").querySelector("input,textarea,button.primary"); if (f) f.focus(); }
+function closeModal(){ $("#modal").classList.remove("open"); }
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function confirmBox(title, text, label, danger, onYes){
+  modal(`<h3>${esc(title)}</h3><div class="meta" style="font-size:13px">${text}</div>
+    <div class="actions" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button>
+    <button class="btn ${danger ? "danger solid" : "primary"}" id="mYes">${esc(label)}</button></div>`);
+  $("#mYes").onclick = async () => { $("#mYes").disabled = true; await onYes(); closeModal(); };
+}
+
+function askRun(key){
+  const pipe = key === "pipeline-next";
+  const refresh = key === "pipeline-refresh";
+  modal(`<h3>Run ${esc(name(key))}</h3>
+    <div class="meta" style="font-size:13px">Starts right away on a fresh branch from main and ends with a pull request. Only one agent runs at a time.</div>
+    ${pipe ? `<label>Keyword id from keywords.csv (leave empty for the highest-scoring backlog keyword)
+      <input id="mArg" inputmode="numeric" pattern="[0-9]*" placeholder="next"></label>` : ""}
+    ${!pipe && !refresh ? `<label>Extra instructions for this run (optional)
+      <textarea id="mExtra" maxlength="2000" placeholder="e.g. Focus on the UK market this time"></textarea></label>` : ""}
+    <div class="actions" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button>
+    <button class="btn primary" id="mGo">Start run</button></div>`);
+  $("#mGo").onclick = async () => {
+    const body = {key};
+    if (pipe) body.arg = ($("#mArg").value || "next").trim();
+    const ex = $("#mExtra"); if (ex && ex.value.trim()) body.extra = ex.value.trim();
+    const d = await act("/api/run", body, $("#mGo"));
+    if (d) closeModal();
+  };
+}
+function confirmStop(){
+  confirmBox("Stop the current run?", "The agent is stopped immediately. Anything it hasn't pushed is discarded, and no PR is opened for this run.",
+    "Stop run", true, () => act("/api/stop", {}));
+}
+function toggleSchedule(key, enable){
+  if (enable) return act("/api/schedule", {key, enabled:true});
+  confirmBox(`Pause ${name(key)}?`, "Scheduled runs are skipped until you resume. You can still run it manually.",
+    "Pause schedule", false, () => act("/api/schedule", {key, enabled:false}));
+}
+function prAct(n, action, btn){
+  const title = btn.dataset.title || "";
+  if (action === "merge") {
+    const warn = btn.dataset.checks === "fail" ? `<br><b class="fail">Checks are failing on this PR.</b>` : btn.dataset.checks === "pending" ? `<br><b class="warnc">Checks are still running.</b>` : "";
+    confirmBox(`Merge #${n}?`, `“${esc(title)}” will be squash-merged into main. If it changes the website, it goes live in a minute or two.${warn}`,
+      "Merge", false, () => act("/api/pr", {number:n, action:"merge"}));
+  } else {
+    confirmBox(`Close #${n}?`, `“${esc(title)}” will be closed without merging and its branch deleted.`,
+      "Close PR", true, () => act("/api/pr", {number:n, action:"close"}));
+  }
+}
+$("#syncBtn").onclick = () => confirmBox("Sync the server's repo?", "Resets the server's working copy to the latest main on GitHub. Use it after you merge PRs or if a run left the repo in a strange state. Only works while no agent is running.",
+  "Sync", false, () => act("/api/sync", {}));
+
+let fSha = null, fPath = null, fDirty = false;
+function renderControl(){
+  const sel = $("#fSel");
+  if (!sel.options.length) sel.innerHTML = S.editable.map(p => `<option>${esc(p)}</option>`).join("");
+  $("#syncBtn").disabled = !!S.busy;
+  $("#audit").innerHTML = (S.audit || []).map(a => `<li><span><b>${esc(a.action)}</b> ${esc(a.detail)}</span><span class="sub">${esc((a.user||"").split("@")[0])} · ${ago(a.t)}</span></li>`).join("")
+    || `<li class="sub">Nothing yet. Runs, stops, merges and edits made here show up in this list.</li>`;
+}
+$("#fLoad").onclick = async () => {
+  if (fDirty && !confirm("Discard your unsaved changes?")) return;
+  const p = $("#fSel").value; $("#fText").value = "Loading…"; $("#fSave").disabled = true;
+  try {
+    const r = await fetch(`/api/file?path=${encodeURIComponent(p)}`, {cache:"no-store"});
+    const d = await r.json(); if (!r.ok) throw new Error(d.error || r.status);
+    fSha = d.sha; fPath = p; fDirty = false; $("#fText").value = d.content; $("#fSave").disabled = false;
+    $("#fMsg").value = ""; $("#fMsg").placeholder = `Update ${p}`;
+  } catch(e){ $("#fText").value = ""; toast("Couldn't open file: " + e.message, true); }
+};
+$("#fText").addEventListener("input", () => { fDirty = true; });
+$("#fSave").onclick = async () => {
+  if (!fPath) return;
+  const d = await act("/api/file", {path:fPath, content:$("#fText").value, sha:fSha, message:$("#fMsg").value.trim()}, $("#fSave"));
+  if (d) { fDirty = false; $("#fLoad").click(); }
+};
 document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
 load();
 </script>
