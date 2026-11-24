@@ -1,5 +1,5 @@
 id,market,cluster,primary_keyword,secondary_keywords,intent,format,monthly_volume,volume_source,competition,winnability,product_fit,score,status,target_url,notes
-1,us,electrical estimate,electrical estimate template,"electrician estimate form;electrical bid template",template,template,,,,,3,,backlog,,seed — validate volume
+1,us,electrical estimate,electrical estimate template,"electrician estimate form;electrical bid template",template,template,,,,,3,,drafted,/us/electrical-estimate-template/,seed — validate volume
 2,us,contractor estimate,how to write a contractor estimate,"construction estimate template;job estimate",how-to,guide+template,,,,,3,,backlog,,seed
 3,us,sales tax on labor,do contractors charge sales tax on labor,"sales tax on services by state",informational,guide,,,,,2,,backlog,,seed — state-by-state; needs state revenue sources
 4,gb,quote template uk,free quote template uk,"quotation template uk;builders quote template",template,template,,,,,3,,backlog,,seed
