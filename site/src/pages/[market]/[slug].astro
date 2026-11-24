@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import AppCta from '../../components/AppCta.astro';
+import { getCollection, render } from 'astro:content';
+import { markets, hubMarkets, articleUrl, abs, SITE } from '../../lib/markets';
+
+export async function getStaticPaths() {
+  const all = await getCollection('articles');
+  return all
+    .filter((a) => a.data.market !== 'global')
+    .map((entry) => ({
+      params: { market: markets[entry.data.market].path, slug: entry.data.slug },
+      props: { entry, all },
+    }));
+}
+const { entry, all } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const info = markets[d.market];
+const path = articleUrl(d.market, d.slug);
+
+const siblings = d.hreflangGroup ? all.filter((a) => a.data.hreflangGroup === d.hreflangGroup) : [entry];
+const alternates = siblings.map((a) => ({ hreflang: markets[a.data.market].hreflang, href: abs(articleUrl(a.data.market, a.data.slug)) }));
+if (d.hreflangGroup) {
+  const dflt = siblings.find((a) => a.data.market === 'global') ?? siblings.find((a) => a.data.market === 'us');
+  if (dflt) alternates.push({ hreflang: 'x-default', href: abs(articleUrl(dflt.data.market, dflt.data.slug)) });
+}
+const iso = (x: Date) => x.toISOString().slice(0, 10);
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org', '@type': 'Article', headline: d.title, description: d.description,
+    datePublished: iso(d.published), dateModified: iso(d.updated), mainEntityOfPage: abs(path),
+    inLanguage: info.lang, publisher: { '@type': 'Organization', name: 'Quotation Maker Pro', url: SITE },
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: info.name, item: abs(`/${info.path}/`) },
+      { '@type': 'ListItem', position: 3, name: d.title, item: abs(path) },
+    ],
+  },
+];
+if (d.faq.length > 0) {
+  jsonLd.push({
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+---
+<Base title={d.title} description={d.description} lang={info.lang} canonicalPath={path} alternates={alternates} ogType="article" jsonLd={jsonLd}>
+  <nav class="crumbs"><a href="/">Home</a> / <a href={`/${info.path}/`}>{info.name}</a></nav>
+  <article>
+    <h1>{d.title}</h1>
+    <p><small>Last reviewed: {iso(d.lastReviewed)}</small></p>
+    <Content />
+    {d.faq.length > 0 && <section><h2>FAQ</h2>{d.faq.map((f) => <><h3>{f.q}</h3><p>{f.a}</p></>)}</section>}
+    {d.sources.length > 0 && <section><h2>Sources</h2><ul>{d.sources.map((s) => <li><a href={s.url} rel="noopener">{s.title}</a></li>)}</ul></section>}
+    <AppCta market={d.market} slug={d.slug} />
+  </article>
+</Base>

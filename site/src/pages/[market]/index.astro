@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { hubMarkets, markets, articleUrl, marketByPath } from '../../lib/markets';
+
+export function getStaticPaths() {
+  return hubMarkets.map((m) => ({ params: { market: markets[m].path }, props: { m } }));
+}
+const { m } = Astro.props;
+const info = markets[m];
+const articles = (await getCollection('articles')).filter((a) => a.data.market === m);
+const clusters = new Map<string, typeof articles>();
+for (const a of articles) {
+  const list = clusters.get(a.data.cluster) ?? [];
+  list.push(a);
+  clusters.set(a.data.cluster, list);
+}
+---
+<Base title={`Quotes, estimates and invoicing guides: ${info.name}`} description={`Practical guides for ${info.name} freelancers and small businesses.`} lang={info.lang} canonicalPath={`/${info.path}/`}>
+  <h1>Guides for {info.name}</h1>
+  {articles.length === 0 && <p>Guides for this market are coming soon.</p>}
+  {[...clusters].map(([name, list]) => (
+    <section>
+      <h2>{name}</h2>
+      <ul>{list.map((a) => <li><a href={articleUrl(m, a.data.slug)}>{a.data.title}</a></li>)}</ul>
+    </section>
+  ))}
+</Base>
