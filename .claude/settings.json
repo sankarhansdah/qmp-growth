@@ -1,19 +1,46 @@
 {
   "permissions": {
     "allow": [
-      "Read", "Write", "Edit", "Glob", "Grep",
-      "WebSearch", "WebFetch",
-      "Bash(gum search:*)", "Bash(gum describe:*)", "Bash(gum read:*)", "Bash(gum schema:*)",
-      "Bash(git status:*)", "Bash(git checkout:*)", "Bash(git switch:*)", "Bash(git add:*)",
-      "Bash(git commit:*)", "Bash(git push origin agent/*)", "Bash(git pull:*)", "Bash(git diff:*)",
-      "Bash(gh pr create:*)", "Bash(gh pr list:*)", "Bash(gh pr view:*)",
-      "Bash(npm ci:*)", "Bash(npm install:*)", "Bash(npm run:*)", "Bash(node scripts/*)",
-      "Bash(wc:*)", "Bash(date:*)", "Bash(ls:*)"
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Bash(gum search:*)",
+      "Bash(gum describe:*)",
+      "Bash(gum read:*)",
+      "Bash(gum schema:*)",
+      "Bash(git status:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push origin agent/*)",
+      "Bash(git pull:*)",
+      "Bash(git diff:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(node scripts/*)",
+      "Bash(wc:*)",
+      "Bash(date:*)",
+      "Bash(ls:*)",
+      "Bash(scripts/gsc:*)",
+      "Bash(./scripts/gsc:*)"
     ],
     "deny": [
-      "Bash(gum write:*)", "Bash(gum destructive:*)",
-      "Bash(git push origin main*)", "Bash(git push --force*)", "Bash(git push -f*)",
-      "Bash(gh pr merge:*)", "Bash(rm -rf:*)"
+      "Bash(gum write:*)",
+      "Bash(gum destructive:*)",
+      "Bash(git push origin main*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(gh pr merge:*)",
+      "Bash(rm -rf:*)"
     ]
   }
 }

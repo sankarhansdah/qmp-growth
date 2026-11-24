@@ -16,5 +16,5 @@ $PATH_LINE
 0 8 15 * *  cd $REPO && scripts/run-agent.sh 07-aso
 # <<< QMP growth agents <<<"
 
-( crontab -l 2>/dev/null | sed '/# >>> QMP growth agents >>>/,/# <<< QMP growth agents <<</d'; echo "$BLOCK" ) | crontab -
+( { crontab -l 2>/dev/null || true; } | sed '/# >>> QMP growth agents >>>/,/# <<< QMP growth agents <<</d'; echo "$BLOCK" ) | crontab -
 echo "Installed:"; crontab -l | sed -n '/QMP growth/,/QMP growth/p'

@@ -90,7 +90,8 @@ installation), use `data/experience-notes.md` and mark spots where his real deta
 
 ## Tools
 
-- `gum` — Google APIs (Search Console, Keyword Planner, Trends, Custom Search). Discover exact
+- `scripts/gsc` — Search Console (queries, URL inspection, sitemaps). Use this, never gum, for Search Console.
+- `gum` — other Google APIs (Keyword Planner, Trends, Custom Search). Discover exact
   operation IDs with `gum search "<task>"` and `gum describe <op>` before calling; use
   `gum read` only (never `gum write` / `gum destructive`). Shape output with field masks.
 - WebSearch / WebFetch — SERP and source reading.

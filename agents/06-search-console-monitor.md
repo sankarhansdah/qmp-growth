@@ -2,9 +2,14 @@
 
 Read `CLAUDE.md`, `data/keywords.csv`, `data/link-map.json`.
 
-Use gum read operations only. Discover them first:
-`gum search "search console searchanalytics query"`, `gum search "search console url inspection"`,
-`gum search "search console sitemaps"`.
+Use `scripts/gsc` for all Search Console data (not gum — gum needs a browser login on this server).
+Run `scripts/gsc --help` once. Commands:
+- `scripts/gsc query --days 28` (current) and `scripts/gsc query --days 28 --prev` (previous window)
+- `scripts/gsc query --days 28 --country usa` (per-market; alpha-3: usa, gbr, can, aus, ind, are)
+- `scripts/gsc inspect --url <full page URL>`
+- `scripts/gsc sitemaps`
+- `scripts/gsc submit-sitemap --url https://quotationmaker.pro/sitemap-index.xml` (only if missing/erroring)
+If the site has no data yet (new site), say so in the report and stop — do not invent numbers.
 
 ## Steps
 1. Pull last 28 days vs previous 28 days, dimensions `page,query,country`.

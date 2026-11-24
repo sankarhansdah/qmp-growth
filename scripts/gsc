@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper: runs gsc.py in its own Python env.  Usage: scripts/gsc <command> [...]
+exec "$HOME/.venvs/qmp/bin/python" "$(dirname "$0")/gsc.py" "$@"

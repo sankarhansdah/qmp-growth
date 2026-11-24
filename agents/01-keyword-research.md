@@ -7,8 +7,7 @@ Goal: keep `data/keywords.csv` a ranked, deduplicated backlog of topics worth wr
 ## Steps
 
 1. **Seed** from `data/seeds.md` for each market + any query in Search Console with impressions
-   but no page targeting it (find the Search Console query operation with
-   `gum search "search console search analytics query"`; last 90 days, dimensions query+page+country).
+   but no page targeting it: `scripts/gsc query --days 90 --dims query,page,country`.
 2. **Expand** with Google Ads Keyword Planner via gum (`gum search "keyword planner generate keyword ideas"`)
    using each market's geo + language. Capture avg monthly searches and competition.
    If Keyword Planner is unavailable (no developer token yet), use Google Trends via gum +
