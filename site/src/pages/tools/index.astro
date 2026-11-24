@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Free tools for quotes and invoices" description="Free calculators and tools for freelancers and small businesses." canonicalPath="/tools/">
+  <h1>Free tools</h1>
+  <p>Interactive tools will be listed here. Each tool is a small plain-JavaScript island.</p>
+  <h2>Example: line total</h2>
+  <form id="calc">
+    <label>Quantity <input name="qty" type="number" min="0" step="any" value="1" /></label>
+    <label>Unit price <input name="price" type="number" min="0" step="any" value="100" /></label>
+    <label>Tax % <input name="tax" type="number" min="0" step="any" value="0" /></label>
+  </form>
+  <p>Total: <strong id="total">100.00</strong></p>
+  <script>
+    const f = document.getElementById('calc') as HTMLFormElement;
+    const out = document.getElementById('total')!;
+    const run = () => {
+      const v = (n: string) => Number((f.elements.namedItem(n) as HTMLInputElement).value) || 0;
+      out.textContent = (v('qty') * v('price') * (1 + v('tax') / 100)).toFixed(2);
+    };
+    f.addEventListener('input', run);
+  </script>
+</Base>

@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import AppCta from '../components/AppCta.astro';
+const faq = [
+  { q: 'What documents can I create?', a: 'Quotes/estimates, invoices, proforma invoices, purchase orders, delivery notes and receipts.' },
+  { q: 'Is it free?', a: 'The free plan includes 5 documents a month. Paid plans remove that limit.' },
+  { q: 'Does it work offline?', a: 'Yes. It works offline and syncs when you are online.' },
+  { q: 'Which platforms are supported?', a: 'Android only for now.' },
+];
+const jsonLd = [
+  {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base title="Quotation Maker Pro: quotes, estimates and invoices on Android" description="Create quotes, estimates, invoices and more on your phone and share a professional PDF. Free for 5 documents a month." canonicalPath="/" jsonLd={jsonLd}>
+  <h1>Quotes and invoices from your phone</h1>
+  <p>Quotation Maker Pro helps freelancers, contractors and small businesses create professional documents and share them as PDF.</p>
+  <AppCta market="global" slug="home" />
+  <p><em>Screenshots: placeholder, to be added.</em></p>
+  <h2>Features</h2>
+  <ul>
+    <li>Quotes, estimates, invoices, proforma invoices, purchase orders, delivery notes and receipts</li>
+    <li>Save clients and items</li>
+    <li>Per-country tax profiles (GST, VAT, sales tax), tax-inclusive or exclusive pricing</li>
+    <li>Flat or percentage discounts and other charges</li>
+    <li>Modern and Classic PDF templates, custom accent color, logo and signature</li>
+    <li>Share via WhatsApp, email or any app</li>
+    <li>Works offline, multi-currency</li>
+  </ul>
+  <h2>Pricing</h2>
+  <p>Free: 5 documents a month. Paid plans: unlimited documents and more (details to be announced).</p>
+  <h2>Guides by country</h2>
+  <p><a href="/us/">United States</a>, <a href="/uk/">United Kingdom</a>, <a href="/ca/">Canada</a>, <a href="/au/">Australia</a>, <a href="/in/">India</a>, <a href="/ae/">UAE</a>. Also <a href="/tools/">free tools</a>.</p>
+  <h2>FAQ</h2>
+  {faq.map((f) => <><h3>{f.q}</h3><p>{f.a}</p></>)}
+</Base>
