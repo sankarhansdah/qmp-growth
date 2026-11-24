@@ -1,11 +1,38 @@
 id,market,cluster,primary_keyword,secondary_keywords,intent,format,monthly_volume,volume_source,competition,winnability,product_fit,score,status,target_url,notes
-1,us,electrical estimate,electrical estimate template,"electrician estimate form;electrical bid template",template,template,,,,,3,,backlog,,seed — validate volume
+1,us,electrical estimate,electrical estimate template,"electrician estimate form;electrical bid template",template,template,,estimate,,1,3,27,backlog,,"SERP 2026-11-24: Jobber, Housecall Pro, FreshBooks, Fergus, ServiceTitan, Simpro all have strong template pages. Differentiate with worked example + Sankar field detail. volume_weight=3 is an estimate"
 2,us,contractor estimate,how to write a contractor estimate,"construction estimate template;job estimate",how-to,guide+template,,,,,3,,backlog,,seed
 3,us,sales tax on labor,do contractors charge sales tax on labor,"sales tax on services by state",informational,guide,,,,,2,,backlog,,seed — state-by-state; needs state revenue sources
 4,gb,quote template uk,free quote template uk,"quotation template uk;builders quote template",template,template,,,,,3,,backlog,,seed
 5,gb,vat on quotes,should a quote include vat,"vat on quotations uk",informational,guide,,,,,2,,backlog,,seed — HMRC sources
-6,in,quotation format,quotation format for electrical work,"electrical quotation format in word;electrical contractor quotation",template,template,,,,,3,,backlog,,seed — Sankar experience page
-7,in,gst on quotation,gst in quotation format,"how to add gst in quotation;quotation with gst",how-to,guide+template,,,,,3,,backlog,,seed — CBIC sources
+6,in,quotation format,quotation format for electrical work,"electrical quotation format in word;electrical contractor quotation",template,template,,estimate,,2,3,36,backlog,,"SERP checked for generic India quotation format (Vyapar, Refrens, myBillBook, Taskip dominate); electrical-specific angle less served. volume_weight=2 estimate. Sankar experience page"
+7,in,gst on quotation,gst in quotation format,"how to add gst in quotation;quotation with gst",how-to,guide+template,,estimate,,1,3,18,backlog,,"SERP 2026-11-24: Vyapar, Refrens, myBillBook, Taskip, BUSY, Munim strong. Need CBIC source + CGST/SGST/IGST worked example. volume_weight=3 estimate"
 8,in,proforma invoice,proforma invoice format,"proforma invoice vs tax invoice",template,template+guide,,,,,3,,backlog,,seed
-9,au,quote template au,quote template australia,"tradie quote template;gst on quotes australia",template,template,,,,,3,,backlog,,seed — ATO sources
+9,au,quote template au,quote template australia,"tradie quote template;gst on quotes australia",template,template,,estimate,,2,3,36,backlog,,"SERP 2026-11-24: business.qld.gov.au and business.gov.au guidance, Austax generator, QuickBooks AU. ATO source needed. volume_weight=2 estimate"
 10,global,quote vs estimate,quote vs estimate,"difference between quotation and estimate",informational,guide,,,,,2,,backlog,,seed — hreflang group candidate
+11,us,change order,change order template,"change order form contractor;construction change order example",template,template,,estimate,,2,3,36,backlog,,seed; SERP unchecked - provisional winnability
+12,us,bid proposal,construction bid proposal template,"bid proposal example;contractor proposal",template,template,,estimate,,2,3,36,backlog,,seed; SERP unchecked - provisional winnability
+13,us,plumbing estimate,plumbing estimate template,"plumber quote template;plumbing invoice",template,template,,estimate,,2,3,36,backlog,,trade x market; SERP unchecked
+14,us,hvac estimate,hvac estimate template,hvac quote template,template,template,,estimate,,2,3,36,backlog,,trade x market; SERP unchecked
+15,us,1099 invoice,how to invoice as a 1099 contractor,1099 contractor invoice template,how-to,guide+template,,estimate,,2,2,16,backlog,,seed; IRS sources
+16,us,estimate vs invoice,estimate vs invoice,difference between estimate and invoice,informational,guide,,estimate,,2,3,12,backlog,,US term set; keep separate from global quote vs estimate
+17,gb,cis,cis invoice template,"cis subcontractor invoice;cis deduction on invoice",template,template+guide,,estimate,,2,3,36,backlog,,seed; HMRC sources
+18,gb,vat threshold,vat registration threshold uk,when to register for vat,informational,guide,,estimate,,1,1,2,backlog,,seed; GOV.UK source; low product fit; check current threshold at draft time
+19,gb,electrician quote,electrician quote template uk,electrical quotation template uk,template,template,,estimate,,2,3,36,backlog,,trade x market; SERP unchecked; Sankar detail
+20,gb,sole trader invoice,sole trader invoice template,invoice template for self employed uk,template,template,,estimate,,1,3,27,backlog,,seed; SERP unchecked - likely crowded
+21,in,e-way bill,e-way bill requirement for goods,when is e-way bill required,informational,guide,,estimate,,2,1,4,backlog,,seed; CBIC/GST portal sources; low product fit
+22,in,hsn sac,hsn code for electrical work,"sac code for contractors;hsn code list",how-to,guide,,estimate,,2,2,16,backlog,,seed; CBIC sources
+23,in,place of supply,igst vs cgst sgst when to charge,place of supply rules,how-to,guide,,estimate,,2,3,24,backlog,,seed; worked example; CBIC sources
+24,in,gstin,gstin number format and validation,how to verify gstin,how-to,guide+tool,,estimate,,2,2,16,backlog,,seed; free-tool candidate (GSTIN format checker)
+25,au,tax invoice,tax invoice requirements australia,what must a tax invoice include abn,how-to,guide+template,,estimate,,2,3,36,backlog,,seed; ATO source
+26,au,tradie quote,how to write a tradie quote,electrician quote australia,how-to,guide+template,,estimate,,2,3,24,backlog,,SERP 2026-11-24: Business Qld + Austax tools
+27,au,gst on quotes,do quotes need to include gst,quote inclusive or exclusive of gst,informational,guide,,estimate,,2,2,8,backlog,,ATO source; a quote is not a tax invoice
+28,ca,gst hst invoice,gst hst invoice requirements canada,what to put on an invoice canada,how-to,guide+template,,estimate,,2,3,24,backlog,,seed; CRA source
+29,ca,hst by province,hst rates by province,gst hst pst by province,informational,guide+table,,estimate,,2,2,12,backlog,,seed; CRA source; frequent review
+30,ca,contractor quote,contractor quote template canada,quote template canada,template,template,,estimate,,2,3,36,backlog,,seed; SERP unchecked
+31,ae,vat invoice,uae vat invoice requirements,tax invoice requirements uae trn,how-to,guide+template,,estimate,,2,3,24,backlog,,seed; FTA source
+32,ae,quotation format,quotation format uae,quotation template uae vat,template,template,,estimate,,2,3,36,backlog,,seed; SERP unchecked
+33,global,proforma,proforma invoice vs invoice,what is a proforma invoice,informational,guide,,estimate,,2,3,12,backlog,,global generic no tax
+34,global,quote follow up,quote follow up email,how to follow up on a quote,how-to,guide+template,,estimate,,2,3,24,backlog,,seed; email templates as downloadable
+35,global,quote validity,how long should a quote be valid,quote validity period,how-to,guide,,estimate,,2,3,24,backlog,,seed
+36,global,how to price,how to price a job,how to price a job as a freelancer,how-to,guide+calculator,,estimate,,1,3,18,backlog,,seed; calculator = free-tool candidate; crowded
+37,global,deposit,deposit on quote how much,deposit request contractor,how-to,guide,,estimate,,2,3,24,backlog,,seed; check legal limits per market before any numbers
