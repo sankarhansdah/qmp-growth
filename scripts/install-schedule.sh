@@ -14,7 +14,9 @@ $PATH_LINE
 0 10 * * 5  cd $REPO && scripts/pipeline.sh next
 0 8 1 * *   cd $REPO && scripts/run-agent.sh 01-keyword-research
 0 8 15 * *  cd $REPO && scripts/run-agent.sh 07-aso
+*/30 * * * * cd $REPO && python3 scripts/auto-merge.py >> logs/auto-merge.log 2>&1
 # <<< QMP growth agents <<<"
 
 ( { crontab -l 2>/dev/null || true; } | sed '/# >>> QMP growth agents >>>/,/# <<< QMP growth agents <<</d'; echo "$BLOCK" ) | crontab -
+mkdir -p "$REPO/logs"
 echo "Installed:"; crontab -l | sed -n '/QMP growth/,/QMP growth/p'

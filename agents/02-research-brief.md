@@ -20,6 +20,17 @@ You produce research only — **no article prose**.
    Reddit (r/smallbusiness, r/Contractor, r/freelance, r/electricians, r/HVAC, r/IndiaTax,
    r/UKPersonalFinance, r/AusFinance, r/smallbusinessuk), Quora, Stack Exchange.
    Quote the user's exact wording (short), with URL.
+   Reddit and Google's PAA box are often unreachable from WebSearch/WebFetch. Do not stop there.
+   Fallbacks, in order, until you have **at least 5 real questions**:
+   a) WebSearch question-form queries: `how to <keyword>`, `do I need <keyword>`, `what should
+      a <keyword> include`, `<keyword> vs ...` — use questions shown in result titles/snippets;
+   b) `site:reddit.com <keyword>` in WebSearch — thread titles in results count, even if the
+      page itself won't load;
+   c) trade and business forums (forums.mikeholt.com, contractortalk.com,
+      ukbusinessforums.co.uk, whirlpool.net.au, Stack Exchange), Quora result titles;
+   d) the questions (never the answers) in competitors' FAQ sections.
+   Record each question with its URL. The writer needs these for the FAQ; an empty FAQ is a
+   failed brief.
 3. **Pain from reviews.** 1–3★ Play Store reviews of competitors in `data/competitors.md`
    that relate to this topic. Exact words + link.
 4. **Facts from primary sources only.** Every rule, rate, threshold, required field, deadline:

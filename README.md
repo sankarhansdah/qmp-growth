@@ -53,6 +53,13 @@ scripts/run-agent.sh 06-search-console-monitor
 scripts/run-agent.sh 07-aso
 ```
 
+## Auto-merge
+`scripts/auto-merge.py` runs every 30 minutes and squash-merges agent PRs whose checks pass,
+that aren't drafts, whose fact-check has no FAIL rows, and that only touch content
+(`site/`, `briefs/`, `reports/`, `queue/`, `keywords.csv`, `link-map.json`). Play listing PRs
+and anything touching rules, scripts or product facts always wait for you. Log:
+`logs/auto-merge.log`; merges also show in the dashboard's activity list.
+
 ## Your weekly job (~15 min)
 - Open PRs on GitHub (phone is fine). For article PRs: skim, fill any `<!-- SANKAR -->`
   markers with 1–2 real lines, merge. For ASO PRs: check wording, merge.
