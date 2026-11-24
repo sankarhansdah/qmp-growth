@@ -32,7 +32,10 @@
       "Bash(ls:*)",
       "Bash(scripts/gsc:*)",
       "Bash(./scripts/gsc:*)",
-      "mcp__21st"
+      "mcp__21st",
+      "Bash(git push -u origin agent/*)",
+      "Bash(git push --set-upstream origin agent/*)",
+      "Bash(git push origin HEAD:agent/*)"
     ],
     "deny": [
       "Bash(gum write:*)",
