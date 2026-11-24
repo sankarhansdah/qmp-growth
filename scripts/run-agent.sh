@@ -11,12 +11,12 @@ AGENT="$1"; shift || true
 EXTRA="${*:-}"
 RUN_ID="$(date +%Y%m%d-%H%M%S)-${AGENT}"
 mkdir -p state logs
-trap 'rm -f state/current.json; git switch main >/dev/null 2>&1 || true' EXIT
+trap 'rm -f state/current.json; git switch -q -C main origin/main >/dev/null 2>&1 || true' EXIT
 
 git stash push -u -m "abandoned before $RUN_ID" >/dev/null 2>&1 || true
-git switch main >/dev/null 2>&1 && git pull --ff-only >/dev/null 2>&1 || true
-BRANCH="agent/${AGENT}/$(date +%Y%m%d)"
-git switch -c "$BRANCH" 2>/dev/null || git switch "$BRANCH"
+git fetch -q origin main
+BRANCH="agent/${AGENT}/$(date +%Y%m%d-%H%M)"
+git switch -q -C "$BRANCH" origin/main   # always start from the latest main
 
 PROMPT="You are running unattended. Today is $(date +%Y-%m-%d).
 Follow CLAUDE.md and the instructions in agents/${AGENT}.md exactly.
