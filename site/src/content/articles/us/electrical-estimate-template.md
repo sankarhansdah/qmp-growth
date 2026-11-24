@@ -82,7 +82,7 @@ There is no single national rule. Each state decides whether labor is taxable, w
 
 ### Materials, labor and markup
 
-**New York:** the state tax department says all charges for materials and labor billed to the customer for a repair, maintenance or installation project are taxable, and that includes expenses and markups ([NY Tax Dept.](https://www.tax.ny.gov/pubs_and_bulls/tg_bulletins/st/repair_maintenance.htm)). In that case the first scenario above is the right shape: tax on the full subtotal, markup included.
+**New York:** the state tax department says all charges for materials and labor billed to the customer for a repair, maintenance or installation project are taxable, and that includes expenses and markups ([NY Tax Dept.](https://www.tax.ny.gov/pubs_and_bulls/tg_bulletins/st/repair_maintenance.htm)). The same bulletin says capital improvement work is not taxable, and that some projects need a case-by-case review, so whether a given panel job counts as a repair, installation or capital improvement matters. Where the work is taxable, the first scenario above is the right shape: tax on the full subtotal, markup included.
 
 ### Lump-sum or itemized pricing
 
