@@ -2,6 +2,10 @@
 
 Read `CLAUDE.md`, `templates/brief.md`, `data/sources-allowlist.md`, `data/product-facts.md`.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: customer-research (mining Reddit/reviews for exact language), competitor-profiling, ai-seo (what makes a page get cited in AI answers).
+CLAUDE.md rules win over any skill.
+
 Input: a keyword row id from `data/keywords.csv` (argument), or pick the highest-score
 `backlog` row if none given. Mode `refresh` if the id has status `published`.
 

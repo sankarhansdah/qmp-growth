@@ -2,6 +2,10 @@
 
 Read `CLAUDE.md` first.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: site-architecture (page hierarchy, URL structure, nav), schema (JSON-LD), seo-audit (technical checklist), copywriting (landing page `/`).
+CLAUDE.md rules win over any skill.
+
 Create an Astro static site in `site/`:
 
 1. Astro (latest stable) + content collections. Collection `articles` with schema:

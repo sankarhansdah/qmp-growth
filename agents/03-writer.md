@@ -3,6 +3,10 @@
 Read `CLAUDE.md`, the brief `briefs/<market>/<slug>.md`, `data/product-facts.md`,
 `data/experience-notes.md`, `templates/article.md`.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: copywriting, ai-seo (answer-first, quotable passages, citations), schema (FAQ/HowTo/Article), free-tools when the asset is a calculator or template.
+CLAUDE.md rules win over any skill.
+
 Write `site/src/content/articles/<market>/<slug>.md` **only from the brief**. Do not add facts
 that are not in the brief's verified facts table. Skip anything marked `UNVERIFIED`.
 

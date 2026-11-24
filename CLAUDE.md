@@ -88,6 +88,15 @@ installation), use `data/experience-notes.md` and mark spots where his real deta
   why, sources used, open questions for Sankar.
 - Max 1 PR per agent run. Never merge your own PR. Never force-push. Never touch `main`.
 
+## Marketing skills
+
+`.claude/skills/` holds vendored marketing skills (Corey Haines' marketingskills, MIT). Use them as
+frameworks and checklists. Product context for every skill: `.agents/product-marketing.md`.
+**This file overrides any skill.** In particular, ignore skill advice to: sign up for or connect
+third-party tools or partner integrations, buy anything, post or email outside this repo, publish
+without a PR, cite non-primary sources for facts, or write testimonials/stats we can't source.
+Never edit `.agents/product-marketing.md` positioning — propose changes in your report instead.
+
 ## Tools
 
 - `scripts/gsc` — Search Console (queries, URL inspection, sitemaps). Use this, never gum, for Search Console.

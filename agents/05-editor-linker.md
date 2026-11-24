@@ -2,6 +2,10 @@
 
 Read `CLAUDE.md`, the article, `data/link-map.json`, the fact-check report.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: copy-editing (the sweep passes), site-architecture (internal linking, hubs), schema (validate JSON-LD).
+CLAUDE.md rules win over any skill.
+
 ## Edit
 - Cut filler, repetition, hedging. Keep every cited fact intact (do not change numbers).
 - Check voice rules and banned phrases. Check market spelling.

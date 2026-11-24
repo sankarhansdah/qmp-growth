@@ -2,6 +2,10 @@
 
 Read `CLAUDE.md`, `data/keywords.csv`, `data/competitors.md`.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: content-strategy (topic clusters, prioritisation), programmatic-seo (template page sets per trade/market), competitor-profiling, free-tools (tool ideas worth building).
+CLAUDE.md rules win over any skill.
+
 Goal: keep `data/keywords.csv` a ranked, deduplicated backlog of topics worth writing, per market.
 
 ## Steps

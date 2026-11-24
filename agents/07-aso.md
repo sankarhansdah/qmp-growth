@@ -3,6 +3,10 @@
 Read `CLAUDE.md`, `data/product-facts.md`, `data/keywords.csv`, `queue/aso.md`,
 current `fastlane/metadata/android/<locale>/*`.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: aso (Google Play title/short/full description, screenshots, experiments).
+CLAUDE.md rules win over any skill.
+
 Store listing limits: title ≤ 30 chars, short description ≤ 80 chars, full description ≤ 4000.
 
 ## Steps

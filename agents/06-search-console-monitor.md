@@ -2,6 +2,10 @@
 
 Read `CLAUDE.md`, `data/keywords.csv`, `data/link-map.json`.
 
+## Skills to use
+Read `.agents/product-marketing.md`, then load these skills: seo-audit (diagnosing drops, indexing, CTR), ai-seo.
+CLAUDE.md rules win over any skill.
+
 Use `scripts/gsc` for all Search Console data (not gum — gum needs a browser login on this server).
 Run `scripts/gsc --help` once. Commands:
 - `scripts/gsc query --days 28` (current) and `scripts/gsc query --days 28 --prev` (previous window)
