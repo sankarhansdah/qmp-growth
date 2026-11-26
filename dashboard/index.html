@@ -107,6 +107,17 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
 .drawer pre{white-space:pre-wrap;word-break:break-word;font:12.5px/1.55 var(--mono);margin:0}
 .stagebox{border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
 .stagebox h3{margin:0;font-size:13px;padding:10px 12px;background:var(--chip);display:flex;justify-content:space-between;gap:8px}
+/* published */
+.gscbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:0 16px 12px;font-size:13px;color:var(--muted)}
+.gscbar .sp{flex:1}
+.tablewrap{overflow-x:auto;padding:0 16px 16px}
+table.pub{width:100%;border-collapse:collapse;font-size:13.5px}
+table.pub th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.pub td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.pub td.t{min-width:240px} table.pub td.t a{font-weight:600}
+table.pub .u{font:12px var(--mono);color:var(--muted);word-break:break-all}
+.ix{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap;display:inline-block}
+.ix.yes{background:var(--brand-soft);color:var(--brand)} .ix.no{background:var(--warn-soft);color:var(--warn)} .ix.bad{background:var(--bad-soft);color:var(--bad)} .ix.unk{background:var(--line);color:var(--muted)}
 /* controls */
 .btn{font:inherit;font-size:12.5px;font-weight:600;border-radius:8px;padding:6px 11px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);white-space:nowrap}
 .btn:hover{border-color:var(--muted)}
@@ -159,6 +170,12 @@ footer{max-width:1240px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);f
   <section class="card">
     <h2>Agents</h2>
     <div class="agents" id="agents"></div>
+  </section>
+
+  <section class="card">
+    <h2>Published articles <span class="count" id="pubCount">0</span></h2>
+    <div class="gscbar" id="gscBar"></div>
+    <div class="tablewrap"><table class="pub"><thead><tr><th>Article</th><th>Market</th><th>Live since</th><th>Google</th><th>Last crawl</th></tr></thead><tbody id="pub"></tbody></table></div>
   </section>
 
   <div class="grid2">
@@ -377,7 +394,7 @@ async function load(){
     const r = await fetch("/api/status", {cache:"no-store"});
     if (!r.ok) throw new Error(r.status);
     S = await r.json();
-    renderAgents(); renderNow(); renderPRs(); renderContent(); renderHistory(); renderReports(); renderHealth(); renderControl();
+    renderAgents(); renderNow(); renderPRs(); renderContent(); renderHistory(); renderReports(); renderHealth(); renderControl(); renderPublished();
     $("#user").textContent = S.user === "local" ? "" : S.user;
     $("#updated").textContent = "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const nx = S.agents.filter(a => a.next).sort((a,b) => a.next - b.next)[0];
@@ -417,6 +434,41 @@ async function openReport(name){
   const r = await fetch(`/api/report?name=${encodeURIComponent(name)}`);
   const d = r.ok ? await r.json() : {text: "Couldn't load report."};
   $("#dBody").innerHTML = `<pre>${esc(d.text)}</pre>`;
+}
+
+
+// ---------- published articles ----------
+const GSC_INSPECT = u => `https://search.google.com/search-console/inspect?resource_id=${encodeURIComponent("sc-domain:quotationmaker.pro")}&id=${encodeURIComponent(u)}`;
+function ixBadge(r){
+  if (!r) return `<span class="ix unk">Not checked</span>`;
+  const c = r.coverage || "", v = r.verdict || "";
+  if (v === "PASS") return `<span class="ix yes">Indexed</span>`;
+  if (/unknown to google/i.test(c)) return `<span class="ix no">Not found yet</span>`;
+  if (/discovered/i.test(c)) return `<span class="ix no">Discovered, not indexed</span>`;
+  if (/crawled/i.test(c)) return `<span class="ix no">Crawled, not indexed</span>`;
+  if (v === "FAIL") return `<span class="ix bad">${esc(c || "Error")}</span>`;
+  return `<span class="ix unk">${esc(c || v || "Unknown")}</span>`;
+}
+function renderPublished(){
+  const list = S.published || [], g = S.gsc || {urls:{}}, urls = g.urls || {};
+  $("#pubCount").textContent = list.filter(a => a.url).length;
+  const sm = (g.sitemaps || [])[0];
+  const smTxt = sm ? `Sitemap: ${sm.isPending ? "pending" : "read"}${sm.lastDownloaded ? " " + ago(Date.parse(sm.lastDownloaded)/1000) : ""}${+sm.errors ? ` · <b class="fail">${+sm.errors} error${+sm.errors>1?"s":""}</b>` : ` · <span class="ok">no errors</span>`}` : "Sitemap: not checked yet";
+  const home = urls["https://quotationmaker.pro/"];
+  $("#gscBar").innerHTML = `<span>Home page ${ixBadge(home)}</span><span>${smTxt}</span>
+    <span>${g.running ? "Checking Google…" : g.checked ? "Checked " + ago(g.checked) : "Not checked yet"}${g.error ? ` · <span class="fail" title="${esc(g.error)}">some checks failed</span>` : ""}</span>
+    <span class="sp"></span>
+    <button class="btn sm" ${g.running ? "disabled" : ""} onclick="act('/api/gsc', {action:'check'}, this)">Check Google now</button>
+    <button class="btn sm" onclick="act('/api/gsc', {action:'submit-sitemap'}, this)">Resubmit sitemap</button>`;
+  $("#pub").innerHTML = list.map(a => {
+    const r = a.url ? urls[a.url] : null;
+    const notIx = a.url && !(r && r.verdict === "PASS");
+    return `<tr><td class="t">${a.url ? `<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a><div class="u">${esc(a.url.replace("https://",""))}</div>` : `${esc(a.title)}<div class="u">${a.live ? "no page for this market" : "draft, not published"}</div>`}</td>
+      <td>${esc(a.market.toUpperCase())}</td>
+      <td style="white-space:nowrap">${a.added ? new Date(a.added*1000).toLocaleDateString([], {day:"numeric", month:"short", year:"numeric"}) : ""}</td>
+      <td>${a.url ? ixBadge(r) : ""}${notIx ? `<div><a class="sub" href="${GSC_INSPECT(a.url)}" target="_blank" rel="noopener">Request indexing ↗</a></div>` : ""}</td>
+      <td class="sub" style="white-space:nowrap">${r && r.lastCrawl && !/^1970/.test(r.lastCrawl) ? ago(Date.parse(r.lastCrawl)/1000) : "never"}</td></tr>`;
+  }).join("") || `<tr><td colspan="5" class="sub">No articles on main yet.</td></tr>`;
 }
 
 // ---------- controls ----------

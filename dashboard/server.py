@@ -342,6 +342,10 @@ def frontmatter(path):
             txt = f.read(4000)
     except Exception:
         return {}
+    return fm_text(txt)
+
+
+def fm_text(txt):
     m = re.match(r"^---\n(.*?)\n---", txt, re.S)
     fm = {}
     if m:
@@ -446,6 +450,106 @@ def agents_view():
     return out
 
 
+
+# ---------------- published articles + Google index status ----------------
+
+SITE_URL = "https://quotationmaker.pro"
+MARKET_PATH = {"us": "us", "gb": "uk", "ca": "ca", "au": "au", "in": "in", "ae": "ae"}  # global has no article route
+GSC_FILE = "gsc-index.json"
+GSC_TTL = 6 * 3600
+_gsc_running = threading.Event()
+
+
+def articles():
+    """Articles on origin/main (what is actually deployed), newest first."""
+    def load():
+        sh(["git", "fetch", "-q", "origin", "main"], 40)
+        ref = "origin/main"
+        out = []
+        for p in sh(["git", "ls-tree", "-r", "--name-only", ref, "site/src/content/articles"], 15).split():
+            if not p.endswith((".md", ".mdx")):
+                continue
+            fm = fm_text(sh(["git", "show", f"{ref}:{p}"], 15)[:4000])
+            market = p.split("/")[-2]
+            slug = fm.get("slug") or os.path.splitext(os.path.basename(p))[0]
+            path = MARKET_PATH.get(market)
+            live = fm.get("published", "").lower() != "false"
+            added = sh(["git", "log", "--diff-filter=A", "--format=%ct", "-1", ref, "--", p], 15).strip()
+            out.append({
+                "title": fm.get("title") or slug, "market": market, "slug": slug, "live": live,
+                "url": f"{SITE_URL}/{path}/{slug}/" if (path and live) else None,
+                "keyword": fm.get("primaryKeyword", ""), "lastReviewed": fm.get("lastReviewed", ""),
+                "reviewBy": fm.get("reviewBy", ""), "added": int(added) if added.isdigit() else None,
+            })
+        out.sort(key=lambda a: a["added"] or 0, reverse=True)
+        return out
+    return cached("articles", 600, load)
+
+
+def gsc_state():
+    try:
+        with open(rp("state", GSC_FILE)) as f:
+            d = json.load(f)
+    except Exception:
+        d = {"checked": None, "urls": {}, "sitemaps": [], "error": None}
+    d["running"] = _gsc_running.is_set()
+    return d
+
+
+def _gsc_cmd(args, timeout=60):
+    r = subprocess.run(["scripts/gsc"] + args, cwd=REPO, capture_output=True, text=True, timeout=timeout)
+    if r.returncode:
+        raise RuntimeError((r.stderr or r.stdout).strip().splitlines()[-1][:200] if (r.stderr or r.stdout).strip() else "gsc failed")
+    return json.loads(r.stdout or "null")
+
+
+def _gsc_worker():
+    d = gsc_state()
+    d.pop("running", None)
+    errors = []
+    urls = [SITE_URL + "/"] + [a["url"] for a in articles() if a["url"]]
+    for u in urls:
+        try:
+            d["urls"][u] = _gsc_cmd(["inspect", "--url", u])
+        except Exception as e:
+            errors.append(f"{u}: {e}")
+    try:
+        d["sitemaps"] = (_gsc_cmd(["sitemaps"]) or {}).get("sitemap", [])
+    except Exception as e:
+        errors.append(f"sitemaps: {e}")
+    d["checked"] = int(time.time())
+    d["error"] = "; ".join(errors)[:500] or None
+    os.makedirs(rp("state"), exist_ok=True)
+    tmp = rp("state", GSC_FILE + ".tmp")
+    with open(tmp, "w") as f:
+        json.dump(d, f)
+    os.replace(tmp, rp("state", GSC_FILE))
+
+
+def gsc_refresh(force=False):
+    if _gsc_running.is_set():
+        return False
+    last = gsc_state().get("checked") or 0
+    if not force and time.time() - last < GSC_TTL:
+        return False
+    _gsc_running.set()
+
+    def run():
+        try:
+            _gsc_worker()
+        except Exception as e:
+            print("gsc refresh failed:", e)
+        finally:
+            _gsc_running.clear()
+    threading.Thread(target=run, daemon=True).start()
+    return True
+
+
+def gsc_submit_sitemap():
+    _gsc_cmd(["submit-sitemap", "--url", SITE_URL + "/sitemap-index.xml"])
+    gsc_refresh(force=True)
+
+
 def status(user):
     return {
         "now": int(time.time()), "user": user,
@@ -454,6 +558,8 @@ def status(user):
         "history": history(30),
         "prs": prs(),
         "content": content(),
+        "published": articles(),
+        "gsc": gsc_state(),
         "reports": reports(),
         "health": health(),
         "stages": STAGES,
@@ -767,6 +873,14 @@ class H(BaseHTTPRequestHandler):
                 sha = file_put(body.get("path", ""), body.get("content", ""), body.get("sha"), body.get("message"))
                 audit(u, "edit", f"{body.get('path')} → {sha}")
                 return self.send(200, {"ok": True, "message": f"Committed {sha} to main"})
+            if path == "/api/gsc":
+                if body.get("action") == "submit-sitemap":
+                    gsc_submit_sitemap()
+                    audit(u, "sitemap", "resubmitted sitemap-index.xml")
+                    return self.send(200, {"ok": True, "message": "Sitemap resubmitted. Rechecking Google…"})
+                started = gsc_refresh(force=True)
+                audit(u, "gsc", "index check")
+                return self.send(200, {"ok": True, "message": "Checking Google… takes about a minute" if started else "A check is already running"})
             if path == "/api/pr":
                 msg = pr_action(body.get("number"), body.get("action"))
                 audit(u, "pr", msg)
@@ -813,6 +927,15 @@ class H(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    def ticker():  # re-check Google every 6 hours without anyone clicking
+        while True:
+            try:
+                if os.path.exists(rp("scripts", "gsc")) and os.path.exists(os.path.expanduser(os.environ.get("GSC_KEY", "~/.config/qmp/sa-searchconsole.json"))):
+                    gsc_refresh()
+            except Exception as e:
+                print("gsc ticker:", e)
+            time.sleep(1800)
+    threading.Thread(target=ticker, daemon=True).start()
     srv = ThreadingHTTPServer(("127.0.0.1", PORT), H)
     print(f"QMP dashboard on http://127.0.0.1:{PORT}  repo={REPO}  allowed={sorted(ALLOWED) or 'any Access user'}")
     srv.serve_forever()
